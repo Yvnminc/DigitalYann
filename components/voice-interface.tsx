@@ -3,11 +3,11 @@
 import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
-import { ChevronDown, SettingsIcon, Check, Copy, Sun, Moon } from "lucide-react"
+import { ChevronDown, BookOpen, Check, Copy, Sun, Moon } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import AudioWaveform from "./audio-waveform"
-import SettingsPanel from "./settings-panel"
+import LearningModulesPanel from "./learning-modules-panel"
 import { useTheme } from "next-themes"
 import RecordingIndicator from "./recording-indicator"
 import ExpandingVoiceInput from "./expanding-voice-input"
@@ -34,11 +34,11 @@ export default function VoiceInterface() {
   ])
   const [isTyping, setIsTyping] = useState(false)
   const [showScrollIndicator, setShowScrollIndicator] = useState(false)
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isLearningModulesOpen, setIsLearningModulesOpen] = useState(false)
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
-  const settingsRef = useRef<HTMLDivElement>(null)
+  const learningModulesRef = useRef<HTMLDivElement>(null)
   const transcriptionStreamRef = useRef<EventSource | null>(null)
 
   const { theme, setTheme, resolvedTheme } = useTheme()
@@ -52,8 +52,8 @@ export default function VoiceInterface() {
   // Handle click outside settings panel
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (settingsRef.current && !settingsRef.current.contains(event.target as Node)) {
-        setIsSettingsOpen(false)
+      if (learningModulesRef.current && !learningModulesRef.current.contains(event.target as Node)) {
+        setIsLearningModulesOpen(false)
       }
     }
 
@@ -382,18 +382,18 @@ export default function VoiceInterface() {
                   {isDark ? <Sun size={18} className="text-white/70" /> : <Moon size={18} className="text-gray-700" />}
                 </motion.button>
 
-                {/* Settings button */}
+                {/* Learning Modules button */}
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                  onClick={() => setIsLearningModulesOpen(!isLearningModulesOpen)}
                   className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border transition-all duration-300"
                   style={{
                     backgroundColor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.6)",
                     borderColor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(200, 200, 200, 0.2)",
                   }}
                 >
-                  <SettingsIcon size={18} className={isDark ? "text-white/70" : "text-gray-700"} />
+                  <BookOpen size={18} className={isDark ? "text-white/70" : "text-gray-700"} />
                 </motion.button>
               </div>
             </div>
@@ -402,11 +402,11 @@ export default function VoiceInterface() {
           {/* Dynamic Island style Recording indicator */}
           <RecordingIndicator isRecording={isRecording} />
 
-          {/* Settings Panel */}
+          {/* Learning Modules Panel */}
           <AnimatePresence>
-            {isSettingsOpen && (
-              <div className="absolute top-20 right-6 z-50" ref={settingsRef}>
-                <SettingsPanel />
+            {isLearningModulesOpen && (
+              <div className="absolute top-20 right-6 z-50" ref={learningModulesRef}>
+                <LearningModulesPanel />
               </div>
             )}
           </AnimatePresence>
