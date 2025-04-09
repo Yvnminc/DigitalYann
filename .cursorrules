@@ -1,0 +1,59 @@
+# DigitalYann Project Rules and Patterns
+
+## Project Structure and Organization
+- Follow the Next.js app router pattern for organizing frontend routes
+- Place reusable UI components in the `components/` directory
+- Keep React hooks in the `hooks/` directory
+- Store utility functions in the `lib/` directory
+- Backend services will be organized by functionality in a `backend/` directory
+
+## Code Style and Patterns
+- Use TypeScript for all components and functions
+- Follow shadcn/ui component patterns for consistent UI development
+- Prefer functional components with hooks for React code
+- Use React Hook Form for form handling
+- Apply Tailwind CSS utility classes for styling
+
+## State Management
+- Use React Context for global state where appropriate
+- Leverage React Query for server state management when implemented
+
+## API Integration
+- RESTful API endpoints will be organized by functionality
+- Backend services will maintain clear separation of concerns
+- Implement proper error handling for all API calls
+
+## Authentication
+- Google OAuth will be the primary authentication method
+- Store authentication tokens securely
+- Implement proper token refresh mechanisms
+
+## UI Components
+- Use the shadcn/ui component library based on Radix UI primitives
+- Follow accessibility best practices in all UI components
+- Maintain consistent styling across the application
+
+## Performance Considerations
+- Optimize for fast initial page load
+- Implement proper data fetching strategies
+- Use appropriate caching mechanisms
+
+## Database Interactions
+- Follow a repository pattern for Supabase interactions
+- Use parametrized queries for data access
+- Implement proper error handling for database operations
+
+## Testing
+- Write unit tests for critical functionality
+- Implement end-to-end tests for core user flows
+- Test error handling and edge cases
+
+## Documentation
+- Document all API endpoints
+- Provide clear component documentation
+- Update memory bank files when making significant changes
+
+## Deployment
+- Follow environment-specific configuration best practices
+- Use environment variables for configuration
+- Implement proper logging and monitoring 

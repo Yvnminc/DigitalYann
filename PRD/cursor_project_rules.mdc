@@ -1,0 +1,114 @@
+---
+description: Apply these rules when creating the project
+globs:
+alwaysApply: true
+---
+## Project Overview
+
+* **Type:** SaaS Application
+* **Description:** A SaaS application for educational purposes, providing interactive AI-driven learning experiences with a focus on student note-taking and teacher feedback on classroom situations.
+* **Primary Goal:** Build a SaaS application that leverages conversational AI, RAG systems, real-time speech-to-text, and secure integrations (Google OAuth and Stripe) to offer tailored educational experiences.
+
+## Project Structure
+
+### Framework-Specific Routing
+
+* **Directory Rules:**
+
+    * **Node.js Express (v4+)**: Implements a conventional RESTful API structure with organized route definitions.
+    * Example: `routes/api.js` → Centralized API endpoint declarations
+    * Example: `routes/auth.js` → Routes for authentication using Google OAuth
+
+### Core Directories
+
+* **Versioned Structure:**
+
+    * **/frontend**: Contains Node.js-driven frontend implementations with intuitive UI components and static assets.
+    * **/backend**: Contains Python-based server logic for AI integrations, data processing, and business logic.
+    * Example: `frontend/public` → Static assets and client-side resources
+    * Example: `backend/api` → Python API endpoints handling OpenRouter, OpenAI interactions, and Stripe payment processing
+
+### Key Files
+
+* **Stack-Versioned Patterns:**
+
+    * **`server.js`** (Node.js): Sets up the Express server and middleware for routing.
+    * **`main.py`** (Python): Entry point for backend operations including integrations with Superbase and AI APIs.
+    * Example: `routes/index.js` → Defines primary routing logic for the Node.js server.
+
+## Tech Stack Rules
+
+* **Version Enforcement:**
+
+    * **Node.js@v14+**: Ensure usage of ES6 modules and asynchronous patterns; strictly maintain a RESTful endpoint structure.
+    * **Python@v3.9+**: Follow standard PEP8 style guidelines and leverage modern async libraries where applicable.
+
+## PRD Compliance
+
+* **Non-Negotiable:**
+
+    * "Build a SaaS application for educational purposes, providing interactive AI-driven learning experiences with a focus on student note-taking and teacher feedback on classroom situations." – All implementations must directly support the functionalities outlined in this PRD, including conversational AI, RAG system, real-time speech-to-text, secure authentication via Google OAuth, and Stripe payment processing.
+
+## App Flow Integration
+
+* **Stack-Aligned Flow:**
+
+    * Example: For Node.js Express, authentication flows are managed in `routes/auth.js` with integration to Google OAuth, while Python endpoints under `backend/api` support AI-driven routes for conversation handling and real-time processing.
+
+## Best Practices
+
+* **Node.js**
+    * Use asynchronous programming with Promises/async-await to handle I/O operations efficiently.
+    * Maintain a clear separation between route definitions and business logic.
+    * Utilize environment variables for configuration and sensitive keys (e.g., API keys, OAuth secrets).
+
+* **Python**
+    * Adhere to PEP8 style guidelines for clean and maintainable code.
+    * Leverage asynchronous libraries (like aiohttp or FastAPI) for handling real-time API calls.
+    * Implement robust error handling and logging mechanisms for better traceability.
+
+* **Superbase**
+    * Optimize database queries to ensure rapid retrieval of text data.
+    * Maintain data encryption and regular backups for security compliance.
+    * Regularly test database performance under load conditions.
+
+* **Google OAuth**
+    * Always validate tokens on the backend to minimize security risks.
+    * Ensure proper session management to protect user data.
+    * Keep up to date with Google’s authentication best practices and libraries.
+
+* **Stripe**
+    * Use webhooks to listen for payment events and update subscription statuses in real-time.
+    * Secure all endpoints handling payment data via SSL/TLS encryption.
+    * Regularly audit code for compliance with PCI-DSS standards.
+
+* **OpenRouter API & OpenAI**
+    * Cache frequent requests to minimize repeated API calls and reduce latency.
+    * Monitor API usage to prevent rate limit breaches and handle exceptions gracefully.
+    * Secure API keys and integrate them using environment variables.
+
+## Rules
+
+* Derive folder/file patterns **directly** from techStackDoc versions.
+* If using Node.js with Express for API routing: ensure that all routes are defined in a modular structure (e.g., `routes/` directory) without mixing any unrelated routing patterns.
+* For Python backend endpoints: maintain a clear separation between API routes and business logic modules.
+* Never mix version patterns; maintain consistency across Node.js and Python implementations.
+
+## Rules Metrics
+
+Before starting the project development, create a metrics file in the root of the project called `cursor_metrics.md`.
+
+### Instructions:
+
+* Each time a cursor rule is used as context, update `cursor_metrics.md`.
+
+* Use the following format for `cursor_metrics.md:`
+  
+  # Rules Metrics
+
+  ## Usage
+  The number of times rules is used as context
+
+  * rule-name.mdc: 5
+  * another-rule.mdc: 2
+  * ...other rules

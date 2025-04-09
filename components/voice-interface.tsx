@@ -364,7 +364,7 @@ export default function VoiceInterface() {
                 className="text-3xl font-light tracking-wide transition-colors duration-300"
                 style={{ color: isDark ? "white" : "#111827" }}
               >
-                SuperVoicy
+                Digtial Yann
               </h1>
 
               <div className="flex items-center space-x-3">
