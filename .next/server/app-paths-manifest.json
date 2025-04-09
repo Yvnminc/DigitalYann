@@ -1,0 +1,4 @@
+{
+  "/api/start-transcription/route": "app/api/start-transcription/route.js",
+  "/page": "app/page.js"
+}
