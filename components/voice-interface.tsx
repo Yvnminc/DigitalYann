@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { ChevronDown, BookOpen, Check, Copy, Sun, Moon } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
@@ -12,6 +12,15 @@ import { useTheme } from "next-themes"
 import RecordingIndicator from "./recording-indicator"
 import ExpandingVoiceInput from "./expanding-voice-input"
 import ExpandableMessage from "./expandable-message"
+
+// Add models array for reference
+const models = [
+  { id: "openai/gpt-4o-search-preview", name: "GPT-4o" },
+  { id: "anthropic/claude-3.7-sonnet", name: "Claude 3.7 Sonnet" },
+  { id: "deepseek/deepseek-r1", name: "DeepSeek" },
+  { id: "google/gemini-2.0-flash-001", name: "Gemini 2.0 Flash" },
+  { id: "openrouter/quasar-alpha", name: "Quasar Alpha" },
+]
 
 type Message = {
   id: string
@@ -40,6 +49,8 @@ export default function VoiceInterface() {
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const learningModulesRef = useRef<HTMLDivElement>(null)
   const transcriptionStreamRef = useRef<EventSource | null>(null)
+  const [selectedModel, setSelectedModel] = useState("google/gemini-2.0-flash-001")
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const { theme, setTheme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -252,7 +263,7 @@ export default function VoiceInterface() {
 
   // Update the handleSendMessage function to reset the textarea height after sending
 
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = async (text: string) => {
     if (!text.trim()) return
 
     // Add user message
@@ -266,29 +277,70 @@ export default function VoiceInterface() {
     setMessages((prev) => [...prev, newMessage])
     setInputText("")
     setTranscript("")
-
-    // Simulate AI typing
+    setIsProcessing(true)
     setIsTyping(true)
 
-    // Simulate AI response after a delay
-    setTimeout(() => {
-      const responses = [
-        "I've found the latest tech news for you. Would you like me to summarize the top stories?",
-        "The weather in Neo Tokyo is 72°F with neon rain expected later tonight.",
-        "Playing 'Midnight Drive' by Synthetic Dreams on your preferred music service.",
-        "I've set a reminder for your meeting tomorrow. Would you like me to prepare any materials?",
-      ]
+    try {
+      console.log(`Using model: ${selectedModel} for chat`);
+      
+      // Prepare messages history for the API
+      const messageHistory = messages
+        .concat(newMessage)
+        .map(msg => ({
+          role: msg.isUser ? "user" : "assistant",
+          content: msg.text
+        }))
 
-      const aiMessage: Message = {
+      // Call the API with the selected model
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: selectedModel,
+          messages: messageHistory,
+          temperature: 0.7
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to get response from API")
+      }
+
+      const data = await response.json()
+      
+      // Extract the assistant's response
+      const assistantResponse = data.choices && data.choices[0]?.message?.content
+      
+      if (assistantResponse) {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: assistantResponse,
+          isUser: false,
+          timestamp: new Date(),
+        }
+
+        setMessages((prev) => [...prev, aiMessage])
+      } else {
+        throw new Error("Invalid response format")
+      }
+    } catch (error) {
+      console.error("Error getting AI response:", error)
+      
+      // Add error message
+      const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: responses[Math.floor(Math.random() * responses.length)],
+        text: "I'm sorry, I encountered an error processing your request. Please try again.",
         isUser: false,
         timestamp: new Date(),
       }
-
+      
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
       setIsTyping(false)
-      setMessages((prev) => [...prev, aiMessage])
-    }, 1500)
+      setIsProcessing(false)
+    }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -314,6 +366,17 @@ export default function VoiceInterface() {
         console.error("Failed to copy message: ", err)
       })
   }
+
+  // Subscribe to model changes from LearningModulesPanel
+  const handleModelChange = useCallback((modelId: string) => {
+    console.log(`Changing model to: ${modelId}`);
+    setSelectedModel(modelId);
+  }, []);
+
+  // Update LearningModulesPanel to not reset the model when toggled
+  const toggleLearningModules = useCallback(() => {
+    setIsLearningModulesOpen(prev => !prev);
+  }, []);
 
   // Don't render UI until mounted to avoid hydration mismatch
   if (!mounted) return null
@@ -386,7 +449,7 @@ export default function VoiceInterface() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsLearningModulesOpen(!isLearningModulesOpen)}
+                  onClick={toggleLearningModules}
                   className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border transition-all duration-300"
                   style={{
                     backgroundColor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.6)",
@@ -399,14 +462,14 @@ export default function VoiceInterface() {
             </div>
           </div>
 
-          {/* Dynamic Island style Recording indicator */}
-          <RecordingIndicator isRecording={isRecording} />
-
           {/* Learning Modules Panel */}
           <AnimatePresence>
             {isLearningModulesOpen && (
               <div className="absolute top-20 right-6 z-50" ref={learningModulesRef}>
-                <LearningModulesPanel />
+                <LearningModulesPanel 
+                  onModelChange={handleModelChange} 
+                  currentModelId={selectedModel} 
+                />
               </div>
             )}
           </AnimatePresence>
@@ -593,6 +656,9 @@ export default function VoiceInterface() {
             />
           </div>
         </div>
+
+        {/* Dynamic Island style Recording indicator */}
+        <RecordingIndicator isRecording={isRecording} />
       </motion.div>
     </div>
   )

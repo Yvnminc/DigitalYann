@@ -1,6 +1,6 @@
+import { ThemeProvider } from "@/components/theme-provider"
 import VoiceInterface from "@/components/voice-interface"
 import { WavyBackground } from "@/components/wavy-background"
-import { ThemeProvider } from "@/components/theme-provider"
 
 export default function Home() {
   return (

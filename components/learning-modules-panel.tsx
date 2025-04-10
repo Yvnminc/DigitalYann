@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { ChevronDown, Cpu, BookText, Brain, Network, Layers, ExternalLink } from "lucide-react"
 import { useTheme } from "next-themes"
@@ -27,11 +27,11 @@ type Course = {
 }
 
 const models: ModelOption[] = [
-  { id: "gpt-4o", name: "GPT-4o", description: "Most capable model, best for complex tasks" },
-  { id: "gpt-4o-mini", name: "GPT-4o-mini", description: "Faster responses, good for most tasks" },
-  { id: "gpt-3.5-turbo", name: "GPT-3.5 Turbo", description: "Fast and efficient for simple tasks" },
-  { id: "claude-3-opus", name: "Claude 3 Opus", description: "Advanced reasoning and comprehension" },
-  { id: "claude-3-sonnet", name: "Claude 3 Sonnet", description: "Balanced performance and efficiency" },
+  { id: "openai/gpt-4o-search-preview", name: "GPT-4o", description: "Advanced reasoning with web search capabilities" },
+  { id: "anthropic/claude-3.7-sonnet", name: "Claude 3.7 Sonnet", description: "Exceptional comprehension with balanced performance" },
+  { id: "deepseek/deepseek-r1", name: "DeepSeek", description: "Powerful language model with strong reasoning abilities" },
+  { id: "google/gemini-2.0-flash-001", name: "Gemini 2.0 Flash", description: "Fast responses with solid multimodal capabilities" },
+  { id: "openrouter/quasar-alpha", name: "Quasar Alpha", description: "Cutting-edge open-source model with broad capabilities" },
 ]
 
 // Generate 10 chapters for each course
@@ -69,13 +69,41 @@ const courses: Course[] = [
   },
 ]
 
-export default function LearningModulesPanel() {
-  const [selectedModel, setSelectedModel] = useState(models[0])
+type Props = {
+  onModelChange?: (modelId: string) => void;
+  currentModelId?: string;
+}
+
+export default function LearningModulesPanel({ onModelChange, currentModelId }: Props) {
+  // Find the currently selected model or use Gemini as default
+  const initialModel = currentModelId 
+    ? models.find(model => model.id === currentModelId) || models.find(model => model.id === "google/gemini-2.0-flash-001") || models[0]
+    : models.find(model => model.id === "google/gemini-2.0-flash-001") || models[0];
+    
+  const [selectedModel, setSelectedModel] = useState(initialModel)
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false)
   const [expandedCourseId, setExpandedCourseId] = useState<string | null>(null)
 
   const { resolvedTheme } = useTheme()
   const isDark = resolvedTheme === "dark"
+
+  // Update selectedModel if currentModelId changes
+  useEffect(() => {
+    if (currentModelId) {
+      const model = models.find(m => m.id === currentModelId);
+      if (model) {
+        setSelectedModel(model);
+      }
+    }
+  }, [currentModelId]);
+
+  // Only notify parent on initial mount, not on every render
+  useEffect(() => {
+    if (onModelChange) {
+      onModelChange(selectedModel.id);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array to run only once on mount
 
   const toggleCourse = (courseId: string) => {
     if (expandedCourseId === courseId) {
@@ -89,6 +117,16 @@ export default function LearningModulesPanel() {
     const link = courseLinks[courseId]?.[chapterId]
     if (link) {
       window.open(link, "_blank", "noopener,noreferrer")
+    }
+  }
+
+  // Handle model selection
+  const handleModelSelection = (model: ModelOption) => {
+    setSelectedModel(model)
+    setIsModelDropdownOpen(false)
+    // Notify parent component of model change
+    if (onModelChange) {
+      onModelChange(model.id)
     }
   }
 
@@ -183,10 +221,7 @@ export default function LearningModulesPanel() {
                   {models.map((model) => (
                     <button
                       key={model.id}
-                      onClick={() => {
-                        setSelectedModel(model)
-                        setIsModelDropdownOpen(false)
-                      }}
+                      onClick={() => handleModelSelection(model)}
                       className={`w-full p-2.5 text-left transition-colors duration-200 ${
                         selectedModel.id === model.id
                           ? isDark
