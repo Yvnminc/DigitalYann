@@ -27,9 +27,9 @@ type Course = {
 }
 
 const models: ModelOption[] = [
-  { id: "openai/gpt-4o-search-preview", name: "GPT-4o", description: "Advanced reasoning with web search capabilities" },
+  { id: "openai/gpt-4o-2024-11-20", name: "GPT-4o", description: "OpenAI's advanced reasoning model" },
   { id: "anthropic/claude-3.7-sonnet", name: "Claude 3.7 Sonnet", description: "Exceptional comprehension with balanced performance" },
-  { id: "deepseek/deepseek-r1", name: "DeepSeek", description: "Powerful language model with strong reasoning abilities" },
+  { id: "deepseek/deepseek-r1", name: "DeepSeek R1", description: "Powerful language model with strong reasoning abilities" },
   { id: "google/gemini-2.0-flash-001", name: "Gemini 2.0 Flash", description: "Fast responses with solid multimodal capabilities" },
   { id: "openrouter/quasar-alpha", name: "Quasar Alpha", description: "Cutting-edge open-source model with broad capabilities" },
 ]

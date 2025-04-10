@@ -15,9 +15,9 @@ import ExpandableMessage from "./expandable-message"
 
 // Add models array for reference
 const models = [
-  { id: "openai/gpt-4o-search-preview", name: "GPT-4o" },
+  { id: "openai/gpt-4o-2024-11-20", name: "GPT-4o" },
   { id: "anthropic/claude-3.7-sonnet", name: "Claude 3.7 Sonnet" },
-  { id: "deepseek/deepseek-r1", name: "DeepSeek" },
+  { id: "deepseek/deepseek-r1", name: "DeepSeek R1" },
   { id: "google/gemini-2.0-flash-001", name: "Gemini 2.0 Flash" },
   { id: "openrouter/quasar-alpha", name: "Quasar Alpha" },
 ]
@@ -36,7 +36,7 @@ export default function VoiceInterface() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      text: "I'm your AI assistant. How can I help you today?",
+      text: "Hi，我是Digital Yann，今天想问什么？",
       isUser: false,
       timestamp: new Date(),
     },

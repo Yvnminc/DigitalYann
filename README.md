@@ -80,7 +80,7 @@ The application supports the following models through OpenRouter:
 
 1. **GPT-4o** - Advanced reasoning with web search capabilities
 2. **Claude 3.7 Sonnet** - Exceptional comprehension with balanced performance
-3. **DeepSeek** - Powerful language model with strong reasoning abilities
+3. **DeepSeek R1** - Powerful language model with strong reasoning abilities
 4. **Gemini 2.0 Flash** - Fast responses with solid multimodal capabilities
 5. **Quasar Alpha** - Cutting-edge open-source model with broad capabilities
 
